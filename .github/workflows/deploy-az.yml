@@ -48,4 +48,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: devopsVjem/devOps-Exercise:${{ github.sha }}
+          tags: devopsvjem.azurecr.io/devops-exercise:${{ github.sha }}
