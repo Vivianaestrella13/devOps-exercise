@@ -16,7 +16,7 @@ kind: ServiceAccount
 metadata:
   name: devops-exercise
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: devops-exercise
@@ -80,7 +80,7 @@ spec:
               app: devops-exercise
       containers:
         - name: devops-exercise
-          image: devopsvjem.azurecr.io/devops-exercise:${{ github.sha }}
+          image: devopsvjem.azurecr.io/devops-exercise:1.0.0
           readinessProbe:
             httpGet:
               path: /actuator/health

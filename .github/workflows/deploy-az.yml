@@ -48,7 +48,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: devopsvjem.azurecr.io/devops-exercise:${{ github.sha }}
+          tags: devopsvjem.azurecr.io/devops-exercise:1.0.0
 
       - name: Azure login
         id: login
@@ -70,5 +70,4 @@ jobs:
         with:
           namespace: devops-ns
           manifests: k8s/devops-exercise.yaml
-          images: devopsvjem.azurecr.io/devops-exercise:${{ github.sha }}
           pull-images: false
