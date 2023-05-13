@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-exercise
+spec:
+  selector:
+    app: devops-exercise
+  ports:
+    - protocol: TCP
+      name: http
+      port: 9001
+      targetPort: 9001
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-exercise
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: devops-exercise
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: devops-exercise
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 66
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: devops-exercise
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: devops-exercise
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-exercise
+spec:
+  selector:
+    matchLabels:
+      app: devops-exercise
+  template:
+    metadata:
+      labels:
+        app: devops-exercise
+    spec:
+      serviceAccountName: "devops-exercise"
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: devops-exercise
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: devops-exercise
+        - maxSkew: 1
+          topologyKey: eks.amazonaws.com/capacityType
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: devops-exercise
+      containers:
+        - name: devops-exercise
+          image: devopsvjem.azurecr.io/devops-exercise:${{ github.sha }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "700Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 9001
+              name: http
+              protocol: TCP
