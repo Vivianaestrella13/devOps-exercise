@@ -80,7 +80,7 @@ spec:
               app: devops-exercise
       containers:
         - name: devops-exercise
-          image: devopsvjem.azurecr.io/devops-exercise:1.0.0
+          image: devopsvjem.azurecr.io/devops-exercise:1.0.1
           readinessProbe:
             httpGet:
               path: /actuator/health

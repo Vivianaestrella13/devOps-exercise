@@ -48,7 +48,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: devopsvjem.azurecr.io/devops-exercise:1.0.0
+          tags: devopsvjem.azurecr.io/devops-exercise:1.0.1
 
       - name: Azure login
         id: login
