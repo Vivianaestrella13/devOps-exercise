@@ -36,6 +36,8 @@ public class SecurityConfig {
                     return authentication;
                 });
         http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/actuator/**")
+                        .permitAll()
                         .anyRequest()
                         .authenticated()
                 )
